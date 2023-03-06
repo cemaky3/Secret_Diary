@@ -6,21 +6,24 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import org.hyperskill.secretdiary.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val saveBtn = findViewById<Button>(R.id.btnSave)
-        val inputTxt = findViewById<EditText>(R.id.etNewWriting)
-        val textTv = findViewById<TextView>(R.id.tvDiary)
 
-        saveBtn.setOnClickListener {
-            if (inputTxt.text.trim().isNotEmpty()) {
-                textTv.text = inputTxt.editableText
-                inputTxt.text.clear()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        binding.btnSave.setOnClickListener {
+            if (binding.etNewWriting.text.trim().isNotEmpty()) {
+                binding.tvDiary.text = binding.etNewWriting.editableText
+                binding.etNewWriting.text.clear()
             } else {
                 Toast.makeText(this, "Empty or blank input cannot be saved", Toast.LENGTH_SHORT).show()
             }
