@@ -30,15 +30,19 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(prefName,Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        val textList =  sharedPreferences.getString(keyDiary, null)?.split("\n\n")?.toMutableList() ?: mutableListOf<String>()
+        val textList =  sharedPreferences.getString(keyDiary, null)?.split("\n\n")?.toMutableList() ?: mutableListOf()
 
         binding.tvDiary.text = sharedPreferences.getString(keyDiary, null)
 
+        fun addNote() {
+            val time = Clock.System.now().toLocalDateTime(currentSystemDefault()).toString().replace("T"," ").substringBefore(".")
+            textList.add(0,"${time}\n${binding.etNewWriting.editableText}")
+            binding.tvDiary.text = textList.joinToString("\n\n")
+        }
+
         binding.btnSave.setOnClickListener {
             if (binding.etNewWriting.text.trim().isNotEmpty()) {
-                var date = Clock.System.now().toLocalDateTime(currentSystemDefault()).toString().replace("T"," ").substringBefore(".")
-                textList.add(0,"${date}\n${binding.etNewWriting.editableText}")
-                binding.tvDiary.text = textList.joinToString("\n\n")
+                addNote()
                 editor.putString(keyDiary, binding.tvDiary.text.toString()).apply()
                 binding.etNewWriting.text.clear()
             } else {
@@ -50,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 .setTitle("Remove last note")
                 .setMessage("Do you really want to remove the last writing? This operation cannot be undone!")
                 .setPositiveButton("Yes") { _, _ ->
-                    if (textList.size >= 1) {
+                    if (textList.isNotEmpty()) {
                         textList.removeFirst()
                         binding.tvDiary.text = textList.joinToString("\n\n")
                         editor.putString(keyDiary, binding.tvDiary.text.toString()).apply()
